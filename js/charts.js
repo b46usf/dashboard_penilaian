@@ -68,4 +68,70 @@ function renderCharts(kelasData) {
     }
   });
 
+  /* =========================
+   BAR CHART → STATUS TUGAS PER KELAS (STACKED)
+   ========================= */
+
+  const labels = kelasInf.map(k => k.kelas);
+  const sudah = kelasInf.map(k => k.totalInformatika);
+  const belum = kelasInf.map(k => k.total - k.totalInformatika);
+
+  barChart?.destroy();
+
+  barChart = new Chart(barKelas, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Sudah Kumpul",
+          data: sudah,
+          backgroundColor: "rgba(34,197,94,0.8)",   // hijau
+          borderColor: "rgba(34,197,94,1)",
+          borderWidth: 1,
+          barThickness: 12,
+          stack: "total"
+        },
+        {
+          label: "Belum Kumpul",
+          data: belum,
+          backgroundColor: "rgba(239,68,68,0.8)",    // merah
+          borderColor: "rgba(239,68,68,1)",
+          borderWidth: 1,
+          barThickness: 12,
+          stack: "total"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            maxRotation: 45,
+            minRotation: 45
+          }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: ${context.raw} siswa`;
+            }
+          }
+        },
+        legend: {
+          position: "top"
+        }
+      }
+    }
+  });
+
 }
