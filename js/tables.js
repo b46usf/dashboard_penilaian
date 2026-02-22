@@ -18,7 +18,7 @@ function renderTable() {
           length: dtParams.length,
           search: dtParams.search
         });
-
+        console.log("Table response:", response);
         callback({
           draw: response.draw,
           recordsTotal: response.recordsTotal,
