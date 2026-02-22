@@ -1,32 +1,89 @@
-let kelasChart;
+function renderCharts(data) {
 
-function renderChart(kelasArr = []) {
-  console.log("[CHART] kelas:", kelasArr);
+  /* =========================
+     FILTER DATA
+     ========================= */
+  const inf = data.filter(d =>
+    d.individu !== "Tidak ada materi informatika"
+  );
 
-  if (!Array.isArray(kelasArr) || kelasArr.length === 0) {
-    console.warn("[CHART] Empty kelas data");
-    return;
-  }
+  const nonInf = data.length - inf.length;
 
-  const labels = kelasArr.map(k => k.kelas);
-  const sudah = kelasArr.map(k => k.sudah);
-  const belum = kelasArr.map(k => k.total - k.sudah);
+  /* =========================
+     PIE CHART INFORMATIKA
+     ========================= */
+  let sudah = 0;
+  let belum = 0;
 
-  if (kelasChart) kelasChart.destroy();
+  inf.forEach(d => {
+    let done =
+      MODE === "individu" ? d.individu === "Sudah" :
+      MODE === "kelompok" ? d.kelompok === "Sudah" :
+      d.individu === "Sudah" || d.kelompok === "Sudah";
 
-  kelasChart = new Chart(chartKelas, {
-    type: "bar",
+    done ? sudah++ : belum++;
+  });
+
+  pieInfChart?.destroy();
+  pieInfChart = new Chart(pieInf, {
+    type: "pie",
     data: {
-      labels,
-      datasets: [
-        { label: "Sudah", data: sudah },
-        { label: "Belum", data: belum }
-      ]
-    },
+      labels: ["Sudah", "Belum"],
+      datasets: [{ data: [sudah, belum] }]
+    }
+  });
+
+  /* =========================
+     PIE CHART NON INFORMATIKA
+     ========================= */
+  pieNonInfChart?.destroy();
+  pieNonInfChart = new Chart(pieNonInf, {
+    type: "pie",
+    data: {
+      labels: ["Non Informatika"],
+      datasets: [{ data: [nonInf] }]
+    }
+  });
+
+  /* =========================
+     LINE CHART → TIMELINE HARIAN
+     ========================= */
+  const timeline = {}; // date → kelas → count
+
+  inf.forEach(d => {
+    const dates =
+      MODE === "individu" ? d.tglIndividu :
+      MODE === "kelompok" ? d.tglKelompok :
+      [d.tglIndividu, d.tglKelompok].join(",");
+
+    dates.split(",").forEach(date => {
+      if (!date) return;
+
+      if (!timeline[date]) timeline[date] = {};
+      if (!timeline[date][d.kelas]) timeline[date][d.kelas] = 0;
+
+      timeline[date][d.kelas]++;
+    });
+  });
+
+  const labels = Object.keys(timeline).sort();
+
+  const kelasSet = new Set(inf.map(d => d.kelas));
+  const datasets = [...kelasSet].map(kelas => ({
+    label: kelas,
+    data: labels.map(t => timeline[t]?.[kelas] || 0),
+    tension: 0.3
+  }));
+
+  lineChart?.destroy();
+  lineChart = new Chart(lineKelas, {
+    type: "line",
+    data: { labels, datasets },
     options: {
       responsive: true,
-      plugins: { legend: { position: "bottom" } },
-      scales: { y: { beginAtZero: true } }
+      scales: {
+        y: { beginAtZero: true }
+      }
     }
   });
 }

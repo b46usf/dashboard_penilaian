@@ -1,20 +1,20 @@
 async function loadDashboard() {
-  console.log("[DASHBOARD] Loading...");
-
   try {
-    const data = await API.getDashboard();
-    console.log("[DASHBOARD] Data:", data);
+    const data = await apiFetch("siswa");
 
-    // ✅ ambil summary dengan benar
-    renderStat(data.summary);
-
-    // ⚠️ API belum kirim siswa → aman
-    renderTable(data.siswa || []);
-
-    // ✅ kirim array kelas
-    renderChart(data.kelas);
+    renderStats(data);
+    renderCharts(data);
+    renderTable(data);
 
   } catch (e) {
-    console.error("[DASHBOARD ERROR]", e);
+    console.error("Dashboard error:", e.message);
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  function setMode(mode) {
+    MODE = mode;
+    loadDashboard(); // 🔥 rerender semua
+  }
+  setInterval(loadDashboard, 15000);
+});

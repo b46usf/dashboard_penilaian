@@ -1,35 +1,20 @@
-function renderStat(summary = {}) {
-  console.log("[STAT]", summary);
+let table;
 
-  total.innerText = summary.total ?? 0;
-  sudah.innerText = summary.sudah ?? 0;
-  belum.innerText = summary.belum ?? 0;
-}
+function renderTable(data) {
+  const inf = data.filter(d =>
+    d.individu !== "Tidak ada materi informatika"
+  );
 
-function renderTable(siswa = []) {
-  console.log("[TABLE] rows:", siswa.length);
-
-  if (!Array.isArray(siswa)) {
-    console.warn("[TABLE] Invalid siswa data");
-    return;
-  }
-
-  tableBody.innerHTML = siswa.map(s => {
-    const status = s.individu || "Belum";
-    const isSudah = status === "Sudah";
-
-    return `
-      <tr class="border-b hover:bg-gray-50">
-        <td class="p-2">${s.nis ?? "-"}</td>
-        <td class="p-2">${s.nama ?? "-"}</td>
-        <td class="p-2">${s.kelas ?? "-"}</td>
-        <td class="p-2 text-center">
-          <span class="px-2 py-1 rounded text-xs font-semibold
-            ${isSudah ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}">
-            ${status.toUpperCase()}
-          </span>
-        </td>
-      </tr>
-    `;
-  }).join("");
+  table?.destroy();
+  table = $("#tableSiswa").DataTable({
+    data: inf,
+    pageLength: 10,
+    columns: [
+      { data: "nis" },
+      { data: "nama" },
+      { data: "kelas" },
+      { data: "individu" },
+      { data: "kelompok" }
+    ]
+  });
 }
