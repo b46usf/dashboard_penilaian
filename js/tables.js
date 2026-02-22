@@ -1,17 +1,36 @@
-let table;
-
-function renderTable(tableResponse) {
-
-  if (!tableResponse || !Array.isArray(tableResponse.data)) {
-    console.error("Table data tidak valid");
-    return;
-  }
+function renderTable() {
 
   table?.destroy();
 
   table = $("#tableSiswa").DataTable({
-    data: tableResponse.data,
+    serverSide: true,
+    processing: true,
+    searching: true,
+    lengthMenu: [10, 25, 50, 100],
     pageLength: 10,
+
+    ajax: async function (dtParams, callback) {
+      try {
+
+        const response = await apiFetch("dashboard", {
+          draw: dtParams.draw,
+          start: dtParams.start,
+          length: dtParams.length,
+          search: dtParams.search
+        });
+
+        callback({
+          draw: response.draw,
+          recordsTotal: response.recordsTotal,
+          recordsFiltered: response.recordsFiltered,
+          data: response.data
+        });
+
+      } catch (error) {
+        console.error("Table load error:", error);
+      }
+    },
+
     columns: [
       { data: "nis", title: "NIS" },
       { data: "nama", title: "Nama" },
@@ -20,5 +39,4 @@ function renderTable(tableResponse) {
       { data: "kelompok", title: "Kelompok" }
     ]
   });
-
 }

@@ -1,15 +1,12 @@
 async function loadDashboard() {
   try {
 
-    console.log("Loading dashboard...");
+    console.log("Loading dashboard summary...");
 
     const data = await apiFetch("dashboard");
 
-    console.log("Dashboard data:", data);
-
     renderStats(data.summary);
     renderCharts(data.kelas);
-    renderTable(data.table);
 
   } catch (e) {
     console.error("Dashboard error:", e.message);
@@ -18,8 +15,9 @@ async function loadDashboard() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  loadDashboard(); // load pertama kali
+  loadDashboard();
+  renderTable();
 
-  setInterval(loadDashboard, 15000); // refresh tiap 15 detik
+  setInterval(loadDashboard, 15000);
 
 });
