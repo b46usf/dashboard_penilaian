@@ -32,7 +32,7 @@ function renderCharts(kelasData) {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return `${context.label}: ${context.raw} siswa`;
+              return `${context.raw} siswa`;
             }
           }
         }
@@ -60,7 +60,7 @@ function renderCharts(kelasData) {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return `${context.label}: ${context.raw} siswa`;
+              return `${context.raw} siswa`;
             }
           }
         }
