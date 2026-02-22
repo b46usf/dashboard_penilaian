@@ -1,28 +1,32 @@
 let kelasChart;
 
-function renderChart(kelasMap) {
+function renderChart(kelasMap = {}) {
+  console.log("[CHART] kelas:", kelasMap);
+
   const labels = Object.keys(kelasMap);
-  const sudah = labels.map(k => kelasMap[k].sudah);
-  const belum = labels.map(k => kelasMap[k].total - kelasMap[k].sudah);
+  if (labels.length === 0) {
+    console.warn("[CHART] No data");
+    return;
+  }
+
+  const sudah = labels.map(k => kelasMap[k].sudah || 0);
+  const belum = labels.map(k => (kelasMap[k].total || 0) - (kelasMap[k].sudah || 0));
 
   if (kelasChart) kelasChart.destroy();
 
-  kelasChart = new Chart(
-    document.getElementById("chartKelas"),
-    {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          { label: "Sudah", data: sudah },
-          { label: "Belum", data: belum }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: "bottom" } },
-        scales: { y: { beginAtZero: true } }
-      }
+  kelasChart = new Chart(chartKelas, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Sudah", data: sudah },
+        { label: "Belum", data: belum }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "bottom" } },
+      scales: { y: { beginAtZero: true } }
     }
-  );
+  });
 }

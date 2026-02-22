@@ -4,17 +4,16 @@ const API = {
 
   async getDashboard() {
     const url = `${this.BASE_URL}?mode=dashboard&key=${encodeURIComponent(this.KEY)}`;
+    console.log("[API] Request:", url);
 
-    const res = await fetch(url, {
-      method: "GET",
-      cache: "no-store", // ⬅️ hindari cached redirect
-    });
+    const res = await fetch(url, { cache: "no-store" });
+    console.log("[API] HTTP status:", res.status);
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const json = await res.json();
+    console.log("[API] Raw response:", json);
+
     if (!json.success) {
       throw new Error(json.error || "API error");
     }
