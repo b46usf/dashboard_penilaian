@@ -23,11 +23,20 @@ function renderCharts(kelasData) {
     data: {
       labels: kelasInf.map(k => k.kelas),
       datasets: [{
-        data: kelasInf.map(() => 1) // tiap kelas 1 slice
+        data: kelasInf.map(k => k.totalInformatika)
       }]
     },
     options: {
-      responsive: true
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.label}: ${context.raw} siswa`;
+            }
+          }
+        }
+      }
     }
   });
 
@@ -42,11 +51,20 @@ function renderCharts(kelasData) {
     data: {
       labels: kelasNonInf.map(k => k.kelas),
       datasets: [{
-        data: kelasNonInf.map(() => 1)
+        data: kelasNonInf.map(k => k.total)
       }]
     },
     options: {
-      responsive: true
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.label}: ${context.raw} siswa`;
+            }
+          }
+        }
+      }
     }
   });
 
