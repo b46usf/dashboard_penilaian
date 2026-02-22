@@ -7,7 +7,7 @@ async function loadDashboard() {
 
     renderStats(data.summary);
     renderCharts(data.kelas);
-
+    console.log("dashboard summary loaded:", data);
   } catch (e) {
     console.error("Dashboard error:", e.message);
   }

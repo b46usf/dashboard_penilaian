@@ -11,7 +11,7 @@ function renderTable() {
 
     ajax: async function (dtParams, callback) {
       try {
-
+        console.log("Loading table summary...");
         const response = await apiFetch("dashboard", {
           draw: dtParams.draw,
           start: dtParams.start,
