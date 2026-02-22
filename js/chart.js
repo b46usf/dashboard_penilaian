@@ -1,16 +1,16 @@
 let kelasChart;
 
-function renderChart(kelasMap = {}) {
-  console.log("[CHART] kelas:", kelasMap);
+function renderChart(kelasArr = []) {
+  console.log("[CHART] kelas:", kelasArr);
 
-  const labels = Object.keys(kelasMap);
-  if (labels.length === 0) {
-    console.warn("[CHART] No data");
+  if (!Array.isArray(kelasArr) || kelasArr.length === 0) {
+    console.warn("[CHART] Empty kelas data");
     return;
   }
 
-  const sudah = labels.map(k => kelasMap[k].sudah || 0);
-  const belum = labels.map(k => (kelasMap[k].total || 0) - (kelasMap[k].sudah || 0));
+  const labels = kelasArr.map(k => k.kelas);
+  const sudah = kelasArr.map(k => k.sudah);
+  const belum = kelasArr.map(k => k.total - k.sudah);
 
   if (kelasChart) kelasChart.destroy();
 

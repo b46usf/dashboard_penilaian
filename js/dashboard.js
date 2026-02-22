@@ -5,8 +5,13 @@ async function loadDashboard() {
     const data = await API.getDashboard();
     console.log("[DASHBOARD] Data:", data);
 
-    renderStat(data);
-    renderTable(data.siswa);
+    // ✅ ambil summary dengan benar
+    renderStat(data.summary);
+
+    // ⚠️ API belum kirim siswa → aman
+    renderTable(data.siswa || []);
+
+    // ✅ kirim array kelas
     renderChart(data.kelas);
 
   } catch (e) {

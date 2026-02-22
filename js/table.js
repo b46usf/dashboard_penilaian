@@ -1,8 +1,9 @@
-function renderStat(data) {
-  console.log("[STAT]", data);
-  total.innerText = data.total ?? 0;
-  sudah.innerText = data.sudah ?? 0;
-  belum.innerText = data.belum ?? 0;
+function renderStat(summary = {}) {
+  console.log("[STAT]", summary);
+
+  total.innerText = summary.total ?? 0;
+  sudah.innerText = summary.sudah ?? 0;
+  belum.innerText = summary.belum ?? 0;
 }
 
 function renderTable(siswa = []) {
