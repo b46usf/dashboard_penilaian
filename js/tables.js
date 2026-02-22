@@ -1,20 +1,24 @@
 let table;
 
-function renderTable(data) {
-  const inf = data.filter(d =>
-    d.individu !== "Tidak ada materi informatika"
-  );
+function renderTable(tableResponse) {
+
+  if (!tableResponse || !Array.isArray(tableResponse.data)) {
+    console.error("Table data tidak valid");
+    return;
+  }
 
   table?.destroy();
+
   table = $("#tableSiswa").DataTable({
-    data: inf,
+    data: tableResponse.data,
     pageLength: 10,
     columns: [
-      { data: "nis" },
-      { data: "nama" },
-      { data: "kelas" },
-      { data: "individu" },
-      { data: "kelompok" }
+      { data: "nis", title: "NIS" },
+      { data: "nama", title: "Nama" },
+      { data: "kelas", title: "Kelas" },
+      { data: "individu", title: "Individu" },
+      { data: "kelompok", title: "Kelompok" }
     ]
   });
+
 }

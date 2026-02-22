@@ -9,7 +9,7 @@ async function loadDashboard() {
 
     renderStats(data.summary);
     renderCharts(data.kelas);
-    // renderTable(data.kelas);
+    renderTable(data.table);
 
   } catch (e) {
     console.error("Dashboard error:", e.message);
