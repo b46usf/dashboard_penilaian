@@ -1,41 +1,120 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxsh8UwiieBizD6hhOJW_5GSZ4pYkU5OaSi6pfus63RxVlZzitCXpaZUAR5kDcgQoGn/exec";
-const SCRIPT_ID = "AKfycbxsh8UwiieBizD6hhOJW_5GSZ4pYkU5OaSi6pfus63RxVlZzitCXpaZUAR5kDcgQoGn";
-const JWT_SECRET = "SUPER_SECRET_INTERNAL_2026_BABESUGAB";
 
-function generateJWT() {
-  const header = {
-    alg: "HS256",
-    typ: "JWT"
-  };
+const ORIGIN_KEY = "VERCEL_FRONTEND_2026";
 
-  const payload = {
-    sid: SCRIPT_ID,
-    ts: Date.now()
-  };
+let JWT_TOKEN = null;
 
-  const headerB64 = btoa(JSON.stringify(header));
-  const payloadB64 = btoa(JSON.stringify(payload));
+/* ========================================
+   DEVICE ID (persistent binding)
+======================================== */
 
-  const data = headerB64 + "." + payloadB64;
+function getDeviceId() {
+  let id = localStorage.getItem("device_id");
 
-  const signature = CryptoJS.HmacSHA256(data, JWT_SECRET)
-    .toString(CryptoJS.enc.Hex);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("device_id", id);
+  }
 
-  return data + "." + signature;
+  return id;
 }
 
-async function apiFetch(mode, params = {}) {
-  const token = generateJWT();
+/* ========================================
+   BASE64 URL ENCODE
+======================================== */
+
+function base64UrlEncode(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/* ========================================
+   SHA256 HELPER
+======================================== */
+
+async function sha256Base64Url(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return base64UrlEncode(hash);
+}
+
+/* ========================================
+   SIGNED REQUEST BUILDER
+======================================== */
+
+async function buildSecurityParams() {
+  const ts = Date.now().toString();
+  const deviceId = getDeviceId();
+
+  const raw = ts + deviceId + ORIGIN_KEY;
+  const signature = await sha256Base64Url(raw);
+
+  return {
+    ts,
+    device_id: deviceId,
+    origin_key: ORIGIN_KEY,
+    signature
+  };
+}
+
+/* ========================================
+   AUTH REQUEST
+======================================== */
+
+async function getToken() {
+
+  const security = await buildSecurityParams();
 
   const q = new URLSearchParams({
-    token,
+    mode: "auth",
+    ...security
+  });
+
+  const res = await fetch(`${API_URL}?${q}`);
+  const json = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.error);
+  }
+
+  JWT_TOKEN = json.token;
+}
+
+/* ========================================
+   MAIN API FETCH
+======================================== */
+
+async function apiFetch(mode, params = {}) {
+
+  if (!JWT_TOKEN) {
+    await getToken();
+  }
+
+  const security = await buildSecurityParams();
+
+  const q = new URLSearchParams({
+    token: JWT_TOKEN,
     mode,
+    ...security,
     ...params
   });
 
   const res = await fetch(`${API_URL}?${q}`);
   const json = await res.json();
 
-  if (!json.success) throw new Error(json.error);
+  if (!json.success) {
+
+    // token expired → refresh
+    if (json.error?.toLowerCase().includes("expired")) {
+      await getToken();
+      return apiFetch(mode, params);
+    }
+
+    throw new Error(json.error);
+  }
+
   return json.data;
 }
