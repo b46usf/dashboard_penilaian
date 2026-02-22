@@ -4,62 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard Monitoring Informatika</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet"
-href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>
-
-<script>
-tailwind.config = {
-  darkMode: 'class',
-}
-</script>
-
-<style>
-/* ===== Smooth Transition Global ===== */
-*{
-  transition: background-color .3s ease,
-              border-color .3s ease,
-              color .3s ease,
-              box-shadow .3s ease;
-}
-
-/* ===== Glass Effect ===== */
-.glass{
-  backdrop-filter: blur(18px);
-  background: rgba(255,255,255,0.6);
-}
-.dark .glass{
-  background: rgba(30,41,59,0.6);
-}
-
-/* ===== Skeleton ===== */
-.skeleton{
-  background: linear-gradient(
-    90deg,
-    rgba(255,255,255,0.1) 25%,
-    rgba(255,255,255,0.2) 37%,
-    rgba(255,255,255,0.1) 63%
-  );
-  background-size: 400% 100%;
-  animation: shimmer 1.4s ease infinite;
-}
-@keyframes shimmer{
-  0%{background-position:100% 0}
-  100%{background-position:-100% 0}
-}
-
-/* ===== Segmented Slider ===== */
-.segment-indicator{
-  position:absolute;
-  top:4px;
-  bottom:4px;
-  width:33.33%;
-  border-radius:999px;
-  transition: transform .3s ease;
-}
-</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body class="bg-gradient-to-br from-slate-100 to-slate-200 
@@ -167,36 +115,12 @@ onclick="setMode(2)">Total</button>
 <!-- ================= SCRIPTS ================= -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
-<script>
-/* ===== Dark Mode ===== */
-const toggleBtn = document.getElementById('themeToggle');
-
-if(localStorage.theme === 'dark'){
-  document.documentElement.classList.add('dark');
-}
-
-toggleBtn.onclick = () => {
-  document.documentElement.classList.toggle('dark');
-  localStorage.theme =
-    document.documentElement.classList.contains('dark')
-    ? 'dark' : 'light';
-}
-
-/* ===== Segmented Control ===== */
-function setMode(index){
-  const indicator = document.getElementById('indicator');
-  indicator.style.transform = `translateX(${index*100}%)`;
-}
-
-/* ===== Remove Skeleton After Load ===== */
-window.addEventListener("load",()=>{
-  setTimeout(()=>{
-    document.querySelectorAll('.skeleton')
-      .forEach(el=>el.classList.remove('skeleton'));
-  },1200);
-});
-</script>
+<script src="js/api.js"></script> 
+<script src="js/state.js"></script> 
+<script src="js/stats.js"></script> 
+<script src="js/charts.js"></script> 
+<script src="js/table.js"></script> 
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>

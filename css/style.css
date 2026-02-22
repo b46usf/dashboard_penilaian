@@ -1,0 +1,42 @@
+/* ===== Smooth Transition Global ===== */
+*{
+  transition: background-color .3s ease,
+              border-color .3s ease,
+              color .3s ease,
+              box-shadow .3s ease;
+}
+
+/* ===== Glass Effect ===== */
+.glass{
+  backdrop-filter: blur(18px);
+  background: rgba(255,255,255,0.6);
+}
+.dark .glass{
+  background: rgba(30,41,59,0.6);
+}
+
+/* ===== Skeleton ===== */
+.skeleton{
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.1) 25%,
+    rgba(255,255,255,0.2) 37%,
+    rgba(255,255,255,0.1) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer{
+  0%{background-position:100% 0}
+  100%{background-position:-100% 0}
+}
+
+/* ===== Segmented Slider ===== */
+.segment-indicator{
+  position:absolute;
+  top:4px;
+  bottom:4px;
+  width:33.33%;
+  border-radius:999px;
+  transition: transform .3s ease;
+}
