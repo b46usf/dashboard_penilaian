@@ -1,10 +1,15 @@
 async function loadDashboard() {
   try {
-    const data = await apiFetch("siswa");
 
-    renderStats(data);
-    renderCharts(data);
-    renderTable(data);
+    console.log("Loading dashboard...");
+
+    const data = await apiFetch("dashboard");
+
+    console.log("Dashboard data:", data);
+
+    renderStats(data.summary);
+    renderCharts(data.kelas);
+    renderTable(data.kelas);
 
   } catch (e) {
     console.error("Dashboard error:", e.message);
@@ -12,9 +17,9 @@ async function loadDashboard() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  function setMode(mode) {
-    MODE = mode;
-    loadDashboard(); // 🔥 rerender semua
-  }
-  setInterval(loadDashboard, 15000);
+
+  loadDashboard(); // load pertama kali
+
+  setInterval(loadDashboard, 15000); // refresh tiap 15 detik
+
 });
