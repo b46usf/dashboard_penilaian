@@ -1,5 +1,5 @@
 const API = {
-  BASE_URL: "https://script.google.com/macros/s/AKfycbwhAlOxkjjGppBh41COEECdWoVs0dWQHa7g92gHwvk/dev",
+  BASE_URL: "https://script.google.com/macros/s/AKfycbwhAlOxkjjGppBh41COEECdWoVs0dWQHa7g92gHwvk/exec",
   KEY: "DASHBOARD_XI_2026_SECRET",
 
   async getDashboard() {
