@@ -1,5 +1,6 @@
 let MODE = "individu"; // individu | kelompok | total
 let pieInfChart, pieNonInfChart, lineChart;
+const format = n => n.toLocaleString("id-ID");
 
 tailwind.config = {
   darkMode: 'class',
