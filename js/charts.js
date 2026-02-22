@@ -6,14 +6,14 @@ function renderCharts(kelasData) {
   }
 
   /* =========================
-     HITUNG KELAS INF vs NON INF
+     SPLIT KELAS
      ========================= */
 
-  const kelasInf = kelasData.filter(k => k.totalInformatika > 0).length;
-  const kelasNonInf = kelasData.length - kelasInf;
+  const kelasInf = kelasData.filter(k => k.totalInformatika > 0);
+  const kelasNonInf = kelasData.filter(k => k.totalInformatika === 0);
 
   /* =========================
-     PIE CHART DISTRIBUSI KELAS
+     PIE INFORMATIKA
      ========================= */
 
   pieInfChart?.destroy();
@@ -21,9 +21,28 @@ function renderCharts(kelasData) {
   pieInfChart = new Chart(pieInf, {
     type: "pie",
     data: {
-      labels: ["Kelas Informatika", "Kelas Non Informatika"],
+      labels: kelasInf.map(k => k.kelas),
       datasets: [{
-        data: [kelasInf, kelasNonInf]
+        data: kelasInf.map(() => 1) // tiap kelas 1 slice
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  /* =========================
+     PIE NON INFORMATIKA
+     ========================= */
+
+  pieNonInfChart?.destroy();
+
+  pieNonInfChart = new Chart(pieNonInf, {
+    type: "pie",
+    data: {
+      labels: kelasNonInf.map(k => k.kelas),
+      datasets: [{
+        data: kelasNonInf.map(() => 1)
       }]
     },
     options: {
