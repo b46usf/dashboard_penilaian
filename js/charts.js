@@ -5,16 +5,12 @@ function renderCharts(kelasData) {
     return;
   }
 
-  /* =========================
-     SPLIT KELAS
-     ========================= */
+  cachedKelasData = kelasData;
 
   const kelasInf = kelasData.filter(k => k.totalInformatika > 0);
   const kelasNonInf = kelasData.filter(k => k.totalInformatika === 0);
 
-  /* =========================
-     PIE INFORMATIKA
-     ========================= */
+  /* ================= PIE INFORMATIKA ================= */
 
   pieInfChart?.destroy();
 
@@ -27,22 +23,11 @@ function renderCharts(kelasData) {
       }]
     },
     options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.raw} siswa`;
-            }
-          }
-        }
-      }
+      responsive: true
     }
   });
 
-  /* =========================
-     PIE NON INFORMATIKA
-     ========================= */
+  /* ================= PIE NON INFORMATIKA ================= */
 
   pieNonInfChart?.destroy();
 
@@ -55,49 +40,47 @@ function renderCharts(kelasData) {
       }]
     },
     options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.raw} siswa`;
-            }
-          }
-        }
-      }
+      responsive: true
     }
   });
 
-  /* =========================
-   BAR CHART → STATUS TUGAS PER KELAS (STACKED)
-   ========================= */
+  /* ================= BAR CHART ================= */
 
-  const labels = kelasInf.map(k => k.kelas);
-  const sudah = kelasInf.map(k => k.totalInformatika);
-  const belum = kelasInf.map(k => k.total - k.totalInformatika);
+  renderBarChart();
+}
+
+function renderBarChart() {
+
+  if (!cachedKelasData.length) return;
+
+  const kelasInf = cachedKelasData.filter(k => k.totalInformatika > 0);
+
+  const dataset = buildSubmissionDataset(kelasInf, currentMode);
+
+  const labels = dataset.map(d => d.kelas);
+  const sudah = dataset.map(d => d.sudah);
+  const belum = dataset.map(d => d.belum);
 
   barChart?.destroy();
 
   barChart = new Chart(barKelas, {
     type: "bar",
     data: {
-      labels: labels,
+      labels,
       datasets: [
         {
           label: "Sudah Kumpul",
           data: sudah,
-          backgroundColor: "rgba(34,197,94,0.8)",   // hijau
-          borderColor: "rgba(34,197,94,1)",
-          borderWidth: 1,
+          backgroundColor: "rgba(34,197,94,0.85)",
+          borderWidth: 0,
           barThickness: 12,
           stack: "total"
         },
         {
           label: "Belum Kumpul",
           data: belum,
-          backgroundColor: "rgba(239,68,68,0.8)",    // merah
-          borderColor: "rgba(239,68,68,1)",
-          borderWidth: 1,
+          backgroundColor: "rgba(239,68,68,0.85)",
+          borderWidth: 0,
           barThickness: 12,
           stack: "total"
         }
@@ -106,6 +89,10 @@ function renderCharts(kelasData) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false
+      },
       scales: {
         x: {
           stacked: true,
@@ -133,5 +120,4 @@ function renderCharts(kelasData) {
       }
     }
   });
-
 }
