@@ -57,58 +57,80 @@
 
 </section>
 
-<!-- ================= SEGMENTED CONTROL ================= -->
-<section class="flex justify-center">
-
-<div class="relative glass border border-white/20 rounded-full p-1 w-[320px] flex text-sm font-medium">
-
-<div id="indicator"
-class="segment-indicator bg-white dark:bg-slate-700 shadow-md">
-</div>
-
-<button class="flex-1 py-2 relative z-10"
-onclick="setMode(0)">Individu</button>
-
-<button class="flex-1 py-2 relative z-10"
-onclick="setMode(1)">Kelompok</button>
-
-<button class="flex-1 py-2 relative z-10"
-onclick="setMode(2)">Total</button>
-
-</div>
-
-</section>
-
 <!-- ================= CHARTS ================= -->
 <section class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
-  <h3 class="mb-2 text-lg font-semibold">Distribusi Informatika</h3>
-  <div class="skeleton h-12 rounded-xl mb-4"></div>
-  <canvas id="pieInf"></canvas>
-</div>
-
-<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
-  <h3 class="mb-2 text-lg font-semibold">Distribusi Non Informatika</h3>
-  <div class="skeleton h-12 rounded-xl mb-4"></div>
-  <canvas id="pieNonInf"></canvas>
-</div>
-
-<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl lg:col-span-2">
-  <h3 class="mb-4 text-lg font-semibold">
-    Progres Tugas per Kelas Informatika
-  </h3>
-
-  <!-- Skeleton Loader -->
-  <div class="skeleton h-12 rounded-xl mb-4"></div>
-
-  <!-- Chart Wrapper -->
-  <div class="overflow-x-auto">
-    <div class="min-w-[1200px] h-[420px] relative">
-      <canvas id="barKelas"></canvas>
-    </div>
+  <!-- ================= PIE INFORMATIKA ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
+    <h3 class="mb-4 text-lg font-semibold">
+      Distribusi Informatika
+    </h3>
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+    <canvas id="pieInf"></canvas>
   </div>
-</div>
+
+  <!-- ================= PIE NON INFORMATIKA ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
+    <h3 class="mb-4 text-lg font-semibold">
+      Distribusi Non Informatika
+    </h3>
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+    <canvas id="pieNonInf"></canvas>
+  </div>
+
+  <!-- ================= BAR CHART CARD ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl lg:col-span-2">
+
+    <!-- HEADER FLEX -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+
+      <!-- TITLE -->
+      <div>
+        <h3 class="text-lg font-semibold">
+          Progres Tugas per Kelas Informatika
+        </h3>
+        <p class="text-sm opacity-70">
+          Monitoring status pengumpulan tugas
+        </p>
+      </div>
+
+      <!-- SEGMENTED CONTROL -->
+      <div class="relative glass border border-white/20 rounded-full p-1 w-full lg:w-[320px] flex text-sm font-medium">
+
+        <div id="indicator"
+          class="segment-indicator bg-white dark:bg-slate-700 shadow-md transition-all duration-300 ease-in-out">
+        </div>
+
+        <button class="flex-1 py-2 relative z-10"
+          onclick="setMode(0)">
+          Individu
+        </button>
+
+        <button class="flex-1 py-2 relative z-10"
+          onclick="setMode(1)">
+          Kelompok
+        </button>
+
+        <button class="flex-1 py-2 relative z-10"
+          onclick="setMode(2)">
+          Total
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Skeleton Loader -->
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+
+    <!-- Chart Wrapper -->
+    <div class="overflow-x-auto">
+      <div class="min-w-[1200px] h-[420px] relative">
+        <canvas id="barKelas"></canvas>
+      </div>
+    </div>
+
+  </div>
 
 </section>
 

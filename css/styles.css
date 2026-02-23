@@ -32,11 +32,12 @@
 }
 
 /* ===== Segmented Slider ===== */
-.segment-indicator{
-  position:absolute;
-  top:4px;
-  bottom:4px;
-  width:33.33%;
-  border-radius:999px;
-  transition: transform .3s ease;
+.segment-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: 33.3333%;
+  border-radius: 9999px;
+  transition: transform 0.3s ease;
 }
