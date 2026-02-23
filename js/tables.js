@@ -10,15 +10,16 @@ function renderTable() {
     pageLength: 10,
 
     ajax: async function (dtParams, callback) {
+
       try {
-        console.log("Loading table summary...");
-        const response = await apiFetch("dashboard", {
+
+        const response = await apiFetch("dashboard_table", {
           draw: dtParams.draw,
           start: dtParams.start,
           length: dtParams.length,
-          search: dtParams.search
+          search: dtParams.search.value
         });
-        console.log("Table response:", response);
+
         callback({
           draw: response.draw,
           recordsTotal: response.recordsTotal,
@@ -39,4 +40,5 @@ function renderTable() {
       { data: "kelompok", title: "Kelompok" }
     ]
   });
+  
 }

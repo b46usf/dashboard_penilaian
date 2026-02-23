@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz8S3h-2sIq0QCKes37AvP3uXe0JbPVWWPE1ebCV6M7CKU30hEjr_xrMW_mUl7edXcT/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzwnM74FOJkY267Eqvt0Vquzs4TrfgdcnSZCXVJni5HcO6r6GQtNivo0IiAvZfuFYbR/exec";
 
 const ORIGIN_KEY = "VERCEL_FRONTEND_2026";
 

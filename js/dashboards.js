@@ -1,23 +1,26 @@
-async function loadDashboard() {
+async function loadSummary() {
   try {
 
-    console.log("Loading dashboard summary...");
+    console.log("Loading summary...");
 
-    const data = await apiFetch("dashboard");
+    const data = await apiFetch("dashboard_summary");
 
     renderStats(data.summary);
     renderCharts(data.kelas);
-    console.log("dashboard summary loaded:", data);
+
+    console.log("Summary loaded:", data);
+
   } catch (e) {
-    console.error("Dashboard error:", e.message);
+    console.error("Summary error:", e.message);
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  loadDashboard();
-  renderTable();
+  loadSummary();   // summary load
+  renderTable();   // table init sekali
 
-  setInterval(loadDashboard, 15000);
+  // refresh summary saja tiap 15 detik
+  setInterval(loadSummary, 15000);
 
 });
