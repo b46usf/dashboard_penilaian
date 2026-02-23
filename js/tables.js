@@ -12,7 +12,7 @@ function renderTable() {
     ajax: async function (dtParams, callback) {
 
       try {
-
+        console.log("Loading Table...");
         const response = await apiFetch("dashboard_table", {
           draw: dtParams.draw,
           start: dtParams.start,
@@ -26,7 +26,7 @@ function renderTable() {
           recordsFiltered: response.recordsFiltered,
           data: response.data
         });
-
+      console.log("Table loaded:", response);
       } catch (error) {
         console.error("Table load error:", error);
       }
