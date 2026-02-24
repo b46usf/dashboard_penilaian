@@ -24,7 +24,7 @@ function renderTable() {
           start: dtParams.start,
           length: dtParams.length,
           search: dtParams.search.value,
-          tingkat: tingkatTable
+          tingkat: $("#filterTingkatTable").val() // 🔥 ambil realtime
         });
 
         callback({
@@ -43,8 +43,44 @@ function renderTable() {
       { data: "nis", title: "NIS" },
       { data: "nama", title: "Nama" },
       { data: "kelas", title: "Kelas" },
-      { data: "individu", title: "Individu" },
-      { data: "kelompok", title: "Kelompok" }
+
+      {
+        data: "individu",
+        title: "Individu",
+        render: function (data) {
+          const isSudah = String(data).toLowerCase() === "sudah";
+
+          return `
+            <span class="px-3 py-1 text-xs font-semibold rounded-full
+              ${isSudah 
+                ? "bg-green-100 text-green-700" 
+                : "bg-red-100 text-red-700"}">
+              ${data}
+            </span>
+          `;
+        }
+      },
+
+      {
+        data: "kelompok",
+        title: "Kelompok",
+        render: function (data) {
+          const isSudah = String(data).toLowerCase() === "sudah";
+
+          return `
+            <span class="px-3 py-1 text-xs font-semibold rounded-full
+              ${isSudah 
+                ? "bg-green-100 text-green-700" 
+                : "bg-red-100 text-red-700"}">
+              ${data}
+            </span>
+          `;
+        }
+      }
     ]
   });
 }
+
+$("#filterTingkatTable").on("change", function () {
+  table.ajax.reload(null, true);
+});

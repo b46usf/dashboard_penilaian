@@ -80,10 +80,6 @@ function buildSubmissionDataset(kelasInf, mode = 0) {
   });
 }
 
-$("#filterTingkatTable").on("change", function () {
-  table.ajax.reload(null, false);
-});
-
 function filterByTingkat(data, tingkat) {
 
   if (tingkat === "all") return data;
