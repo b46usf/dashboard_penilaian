@@ -141,7 +141,23 @@
 
 <!-- ================= TABLE ================= -->
 <section class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
-  <h3 class="mb-2 text-lg font-semibold">Detail Tugas Siswa Informatika</h3>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+
+    <h3 class="mb-2 text-lg font-semibold">Detail Tugas Siswa Informatika</h3>
+
+    <div class="flex items-center gap-3">
+
+      <select id="filterTingkatTable"
+        class="glass border border-white/20 rounded-xl px-4 py-2 text-sm w-[140px]">
+        <option value="all">Semua</option>
+        <option value="x">Kelas X</option>
+        <option value="xi">Kelas XI</option>
+        <option value="xii">Kelas XII</option>
+      </select>
+
+    </div>
+
+  </div>
   <div class="w-full overflow-hidden">
     <table id="tableSiswa" class="display w-full text-sm"></table>
   </div>

@@ -1,24 +1,30 @@
 function renderTable() {
 
+  const tingkatTable = $("#filterTingkatTable").val();
+
   table?.destroy();
 
   table = $("#tableSiswa").DataTable({
     serverSide: true,
     processing: true,
     searching: true,
+    responsive: true,
+    deferRender: true,
+    searchDelay: 400, // 🔥 bikin lebih ringan
     lengthMenu: [10, 25, 50, 100],
     pageLength: 10,
+    order: [[2, "asc"]],
 
     ajax: async function (dtParams, callback) {
 
       try {
-        console.log("Loading Table...");
+
         const response = await apiFetch("dashboard_table", {
           draw: dtParams.draw,
           start: dtParams.start,
           length: dtParams.length,
           search: dtParams.search.value,
-          tingkat: currentTingkat
+          tingkat: tingkatTable
         });
 
         callback({
@@ -27,7 +33,7 @@ function renderTable() {
           recordsFiltered: response.recordsFiltered,
           data: response.data
         });
-      console.log("Table loaded:", response);
+
       } catch (error) {
         console.error("Table load error:", error);
       }
@@ -41,5 +47,4 @@ function renderTable() {
       { data: "kelompok", title: "Kelompok" }
     ]
   });
-  
 }
