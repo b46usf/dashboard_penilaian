@@ -1,14 +1,10 @@
 async function loadSummary() {
   try {
 
-    console.log("Loading summary...");
-
     const data = await apiFetch("dashboard_summary");
 
     renderStats(data.summary);
     renderCharts(data.kelas);
-
-    console.log("Summary loaded:", data);
 
   } catch (e) {
     console.error("Summary error:", e.message);
