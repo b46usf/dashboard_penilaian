@@ -82,9 +82,8 @@
   <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl lg:col-span-2">
 
     <!-- HEADER FLEX -->
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
-      <!-- TITLE -->
       <div>
         <h3 class="text-lg font-semibold">
           Progres Tugas per Kelas Informatika
@@ -94,38 +93,33 @@
         </p>
       </div>
 
-      <select id="filterTingkat"
-        onchange="setTingkat(this.value)"
-        class="glass border border-white/20 rounded-xl px-4 py-2 text-sm">
+      <div class="flex items-center gap-4">
 
-        <option value="all">Semua</option>
-        <option value="x">Kelas X</option>
-        <option value="xi">Kelas XI</option>
-        <option value="xii">Kelas XII</option>
+        <select id="filterTingkat"
+          onchange="setTingkat(this.value)"
+          class="glass border border-white/20 rounded-xl px-4 py-2 text-sm w-[120px]">
+          <option value="all">Semua</option>
+          <option value="x">X</option>
+          <option value="xi">XI</option>
+          <option value="xii">XII</option>
+        </select>
 
-      </select>
+        <div class="relative glass border border-white/20 rounded-full p-1 w-[280px] flex text-sm font-medium">
 
-      <!-- SEGMENTED CONTROL -->
-      <div class="relative glass border border-white/20 rounded-full p-1 w-full lg:w-[320px] flex text-sm font-medium">
+          <div id="indicator"
+            class="segment-indicator bg-white dark:bg-slate-700 shadow-md transition-all duration-300 ease-in-out">
+          </div>
 
-        <div id="indicator"
-          class="segment-indicator bg-white dark:bg-slate-700 shadow-md transition-all duration-300 ease-in-out">
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(0)">Individu</button>
+
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(1)">Kelompok</button>
+
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(2)">Total</button>
+
         </div>
-
-        <button class="flex-1 py-2 relative z-10"
-          onclick="setMode(0)">
-          Individu
-        </button>
-
-        <button class="flex-1 py-2 relative z-10"
-          onclick="setMode(1)">
-          Kelompok
-        </button>
-
-        <button class="flex-1 py-2 relative z-10"
-          onclick="setMode(2)">
-          Total
-        </button>
 
       </div>
 

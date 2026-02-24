@@ -72,13 +72,13 @@ function renderBarChart() {
           {
             label: "Sudah Kumpul",
             data: sudah,
-            backgroundColor: "rgba(34,197,94,0.9)",
+            backgroundColor: "rgba(34,197,94,0.95)", // hijau sedikit soft
             stack: "total"
           },
           {
             label: "Belum Kumpul",
             data: belum,
-            backgroundColor: "rgba(239,68,68,0.9)",
+            backgroundColor: "rgba(239,68,68,0.7)", // merah sedikit soft
             stack: "total"
           }
         ]
@@ -90,8 +90,22 @@ function renderBarChart() {
           easing: 'easeOutQuart'
         },
         scales: {
-          x: { stacked: true },
-          y: { stacked: true, beginAtZero: true }
+          x: { 
+            stacked: true,
+            grid: { display: false }
+          },
+          y: { 
+            stacked: true,
+            beginAtZero: true,
+            grid: { color: "rgba(0,0,0,0.05)" }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              boxWidth: 14
+            }
+          }
         }
       },
       plugins: [percentagePlugin]
@@ -111,30 +125,32 @@ const percentagePlugin = {
 
     const { ctx } = chart;
 
-    chart.data.datasets.forEach((dataset, datasetIndex) => {
+    const sudahDataset = chart.data.datasets[0];
+    const belumDataset = chart.data.datasets[1];
 
-      const meta = chart.getDatasetMeta(datasetIndex);
+    const meta = chart.getDatasetMeta(0);
 
-      meta.data.forEach((bar, index) => {
+    meta.data.forEach((bar, index) => {
 
-        const value = dataset.data[index];
-        const total =
-          chart.data.datasets[0].data[index] +
-          chart.data.datasets[1].data[index];
+      const sudah = sudahDataset.data[index];
+      const belum = belumDataset.data[index];
+      const total = sudah + belum;
 
-        if (!total || datasetIndex !== 0) return;
+      if (!total || sudah === 0) return;
 
-        const percent = Math.round((value / total) * 100);
+      const percent = Math.round((sudah / total) * 100);
 
-        ctx.save();
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 11px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(percent + "%", bar.x, bar.y);
-        ctx.restore();
+      const x = bar.x;
+      const y = bar.y + (bar.height / 2); // 🔥 tengah segment hijau
 
-      });
+      ctx.save();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(percent + "%", x, y);
+      ctx.restore();
+
     });
   }
 };
