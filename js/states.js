@@ -1,5 +1,5 @@
 let MODE = "individu"; // individu | kelompok | total
-let pieInfChart, pieNonInfChart, lineChart, barChart, table;
+let pieInfChart, pieNonInfChart, lineChart, barChart, table, currentTingkat = "all";
 const format = n => n.toLocaleString("id-ID");
 
 let currentMode = 0; // 0 = Individu, 1 = Kelompok, 2 = Total
@@ -80,3 +80,17 @@ function buildSubmissionDataset(kelasInf, mode = 0) {
   });
 }
 
+function filterByTingkat(data, tingkat) {
+
+  if (tingkat === "all") return data;
+
+  return data.filter(k =>
+    k.kelas.toLowerCase().startsWith(tingkat)
+  );
+}
+
+function setTingkat(value) {
+  currentTingkat = value;
+  renderBarChart();
+  renderTable(); // auto refresh table juga
+}

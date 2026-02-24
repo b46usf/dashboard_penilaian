@@ -17,7 +17,8 @@ function renderTable() {
           draw: dtParams.draw,
           start: dtParams.start,
           length: dtParams.length,
-          search: dtParams.search.value
+          search: dtParams.search.value,
+          tingkat: currentTingkat
         });
 
         callback({

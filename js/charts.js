@@ -53,7 +53,9 @@ function renderBarChart() {
 
   if (!cachedKelasData.length) return;
 
-  const kelasInf = cachedKelasData.filter(k => k.totalInformatika > 0);
+  let kelasInf = cachedKelasData.filter(k => k.totalInformatika > 0);
+
+  kelasInf = filterByTingkat(kelasInf, currentTingkat);
 
   const dataset = buildSubmissionDataset(kelasInf, currentMode);
 
@@ -61,63 +63,78 @@ function renderBarChart() {
   const sudah = dataset.map(d => d.sudah);
   const belum = dataset.map(d => d.belum);
 
-  barChart?.destroy();
-
-  barChart = new Chart(barKelas, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "Sudah Kumpul",
-          data: sudah,
-          backgroundColor: "rgba(34,197,94,0.85)",
-          borderWidth: 0,
-          barThickness: 12,
-          stack: "total"
-        },
-        {
-          label: "Belum Kumpul",
-          data: belum,
-          backgroundColor: "rgba(239,68,68,0.85)",
-          borderWidth: 0,
-          barThickness: 12,
-          stack: "total"
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: "index",
-        intersect: false
-      },
-      scales: {
-        x: {
-          stacked: true,
-          ticks: {
-            maxRotation: 45,
-            minRotation: 45
+  if (!barChart) {
+    barChart = new Chart(barKelas, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Sudah Kumpul",
+            data: sudah,
+            backgroundColor: "rgba(34,197,94,0.9)",
+            stack: "total"
+          },
+          {
+            label: "Belum Kumpul",
+            data: belum,
+            backgroundColor: "rgba(239,68,68,0.9)",
+            stack: "total"
           }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 600,
+          easing: 'easeOutQuart'
         },
-        y: {
-          stacked: true,
-          beginAtZero: true
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true, beginAtZero: true }
         }
       },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.dataset.label}: ${context.raw} siswa`;
-            }
-          }
-        },
-        legend: {
-          position: "top"
-        }
-      }
-    }
-  });
+      plugins: [percentagePlugin]
+    });
+  } else {
+    // 🔥 UPDATE DATA ONLY (SMOOTH TRANSITION)
+    barChart.data.labels = labels;
+    barChart.data.datasets[0].data = sudah;
+    barChart.data.datasets[1].data = belum;
+    barChart.update();
+  }
 }
+
+const percentagePlugin = {
+  id: 'percentagePlugin',
+  afterDatasetsDraw(chart) {
+
+    const { ctx } = chart;
+
+    chart.data.datasets.forEach((dataset, datasetIndex) => {
+
+      const meta = chart.getDatasetMeta(datasetIndex);
+
+      meta.data.forEach((bar, index) => {
+
+        const value = dataset.data[index];
+        const total =
+          chart.data.datasets[0].data[index] +
+          chart.data.datasets[1].data[index];
+
+        if (!total || datasetIndex !== 0) return;
+
+        const percent = Math.round((value / total) * 100);
+
+        ctx.save();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(percent + "%", bar.x, bar.y);
+        ctx.restore();
+
+      });
+    });
+  }
+};
