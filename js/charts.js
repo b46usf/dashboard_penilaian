@@ -73,24 +73,34 @@ function renderBarChart() {
             label: "Sudah Kumpul",
             data: sudah,
             backgroundColor: "rgba(34,197,94,0.95)", // hijau sedikit soft
-            stack: "total"
+            stack: "total",
+            barPercentage: 0.7,
+            categoryPercentage: 0.7,
           },
           {
             label: "Belum Kumpul",
             data: belum,
             backgroundColor: "rgba(239,68,68,0.7)", // merah sedikit soft
-            stack: "total"
+            stack: "total",
+            barPercentage: 0.7,
+            categoryPercentage: 0.7,
           }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         animation: {
           duration: 600,
           easing: 'easeOutQuart'
         },
         scales: {
           x: { 
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              minRotation: 0
+            },
             stacked: true,
             grid: { display: false }
           },

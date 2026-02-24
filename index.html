@@ -99,9 +99,9 @@
           onchange="setTingkat(this.value)"
           class="glass border border-white/20 rounded-xl px-4 py-2 text-sm w-[120px]">
           <option value="all">Semua</option>
-          <option value="x">X</option>
-          <option value="xi">XI</option>
-          <option value="xii">XII</option>
+          <option value="x - ">X</option>
+          <option value="xi - ">XI</option>
+          <option value="xii - ">XII</option>
         </select>
 
         <div class="relative glass border border-white/20 rounded-full p-1 w-[280px] flex text-sm font-medium">
@@ -129,8 +129,8 @@
     <div class="skeleton h-12 rounded-xl mb-4"></div>
 
     <!-- Chart Wrapper -->
-    <div class="overflow-x-auto">
-      <div class="min-w-[1200px] h-[420px] relative">
+    <div class="w-full overflow-hidden">
+      <div class="relative w-full h-[420px]">
         <canvas id="barKelas"></canvas>
       </div>
     </div>
@@ -142,7 +142,7 @@
 <!-- ================= TABLE ================= -->
 <section class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
   <h3 class="mb-2 text-lg font-semibold">Detail Tugas Siswa Informatika</h3>
-  <div class="overflow-x-auto">
+  <div class="w-full overflow-hidden">
     <table id="tableSiswa" class="display w-full text-sm"></table>
   </div>
 </section>
