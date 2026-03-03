@@ -4,10 +4,7 @@
  * ========================================
  */
 
-// Chart color palette - will be dynamically updated based on theme
-const CHART_PALETTE = {
-  pie: null // Will be set from getPieChartColors()
-};
+// Theme colors are now managed centrally via getPieChartColors() and getThemeColors() in config.js
 
 /**
  * Show skeleton loaders for charts
@@ -61,13 +58,6 @@ function hideChartSkeletons() {
 }
 
 /**
- * Update chart palette based on theme
- */
-function updateChartPalette() {
-  CHART_PALETTE.pie = getPieChartColors();
-}
-
-/**
  * Render all charts
  * Called AFTER data is successfully fetched
  */
@@ -79,10 +69,7 @@ function renderCharts(kelasData) {
   }
 
   // Store data
-  STATE.cachedKelasData = kelasData;
-  
-  // Update palette for current theme
-  updateChartPalette();
+  setCachedData(kelasData);
 
   const kelasInf = kelasData.filter(k => k.totalInformatika > 0);
   const kelasNonInf = kelasData.filter(k => k.totalInformatika === 0);
@@ -99,112 +86,112 @@ function renderCharts(kelasData) {
 
 /**
  * Render both Pie Charts with improved legend
+ * Uses centralized theme utilities (DRY principle)
  */
-function renderPieCharts(kelasInf, kelasNonInf) {
-  const isDark = document.documentElement.classList.contains('dark');
-  const borderColor = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)';
-  const legendColor = isDark ? '#e2e8f0' : '#475569';
-
-  // Shared pie options with improved legend - positioned on the right for more space
-  const pieOptions = {
+function buildPieOptions() {
+  return {
     responsive: true,
     maintainAspectRatio: false,
     layout: {
-      padding: 20
+      padding: {
+        top: 10,
+        bottom: 10
+      }
     },
     plugins: {
       legend: {
         position: 'bottom',
+        align: 'center',
         labels: {
           padding: 20,
           usePointStyle: true,
           pointStyle: 'circle',
+          boxWidth: 10,
+          boxHeight: 10,
+          // Get theme colors dynamically on each render
+          color: getThemeColors().legendColor,
           font: {
             size: 12,
-            family: "'Inter', sans-serif"
-          },
-          color: legendColor,
-          // Shorter labels to prevent cutting
-          generateLabels: function(chart) {
-            const data = chart.data;
-            if (data.labels.length && data.datasets.length) {
-              return data.labels.map(function(label, i) {
-                const meta = chart.getDatasetMeta(0);
-                const style = meta.controller.getStyle(i);
-                const value = data.datasets[0].data[i];
-                const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                const percentage = total > 0 ? Math.round((value / total) * 100) + '%' : '';
-                // Shorter label format
-                const shortLabel = label.replace(' - ', '-');
-                return {
-                  text: shortLabel + ' (' + percentage + ')',
-                  fillStyle: style.backgroundColor,
-                  strokeStyle: style.borderColor,
-                  lineWidth: style.borderWidth,
-                  hidden: false,
-                  index: i
-                };
-              });
-            }
-            return [];
+            family: "'Plus Jakarta Sans', sans-serif",
+            weight: '500'
           }
         }
       },
       tooltip: {
-        callbacks: {
-          label: function(context) {
-            const value = context.raw;
-            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = total > 0 ? Math.round((value / total) * 100) + '%' : '';
-            return context.label + ': ' + value + ' (' + percentage + ')';
-          }
-        }
+        // Get theme colors dynamically
+        backgroundColor: getThemeColors().tooltipBg,
+        titleColor: getThemeColors().tooltipTitle,
+        bodyColor: getThemeColors().tooltipBody,
+        borderColor: getThemeColors().borderLight,
+        borderWidth: 1,
+        padding: 12
       }
     }
   };
+}
 
-  // Render Pie Informatika
-  const canvasInf = document.getElementById("pieInf");
-  if (canvasInf) {
-    if (STATE.charts.pieInf) {
-      STATE.charts.pieInf.destroy();
-    }
-    
-    STATE.charts.pieInf = new Chart(canvasInf, {
+function renderPieCharts(kelasInf, kelasNonInf) {
+  const pieColors = getPieChartColors();
+  const themeColors = getThemeColors();
+  const options = buildPieOptions();
+
+  createOrUpdatePieChart(
+    "pieInf",
+    "pieInf",
+    kelasInf.map(k => k.kelas),
+    kelasInf.map(k => k.totalInformatika),
+    pieColors,
+    themeColors,
+    options
+  );
+
+  createOrUpdatePieChart(
+    "pieNonInf",
+    "pieNonInf",
+    kelasNonInf.map(k => k.kelas),
+    kelasNonInf.map(k => k.total),
+    pieColors,
+    themeColors,
+    options
+  );
+}
+
+function createOrUpdatePieChart(
+  key,
+  canvasId,
+  labels,
+  data,
+  colors,
+  themeColors,
+  options
+) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  if (!STATE.charts[key]) {
+    STATE.charts[key] = new Chart(canvas, {
       type: "pie",
       data: {
-        labels: kelasInf.map(k => k.kelas),
+        labels,
         datasets: [{
-          data: kelasInf.map(k => k.totalInformatika),
-          backgroundColor: CHART_PALETTE.pie,
+          data,
+          backgroundColor: colors,
           borderWidth: 2,
-          borderColor: borderColor
+          borderColor: themeColors.border
         }]
       },
-      options: pieOptions
+      options
     });
-  }
+  } else {
+    const chart = STATE.charts[key];
 
-  // Render Pie Non-Informatika
-  const canvasNonInf = document.getElementById("pieNonInf");
-  if (canvasNonInf) {
-    if (STATE.charts.pieNonInf) {
-      STATE.charts.pieNonInf.destroy();
-    }
-    
-    STATE.charts.pieNonInf = new Chart(canvasNonInf, {
-      type: "pie",
-      data: {
-        labels: kelasNonInf.map(k => k.kelas),
-        datasets: [{
-          data: kelasNonInf.map(k => k.total),
-          backgroundColor: CHART_PALETTE.pie,
-          borderWidth: 2,
-          borderColor: borderColor
-        }]
-      },
-      options: pieOptions
-    });
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.data.datasets[0].backgroundColor = colors;
+    chart.data.datasets[0].borderColor = themeColors.border;
+
+    chart.options = buildPieOptions();
+    chart.update();
   }
 }
 
@@ -271,9 +258,10 @@ function renderBarChart() {
 
 /**
  * Get bar chart options with theme support
+ * Uses centralized theme utilities (DRY principle)
  */
 function getBarChartOptions(colors) {
-  const isDark = document.documentElement.classList.contains('dark');
+  const themeColors = getThemeColors();
   
   return {
     responsive: true,
@@ -315,10 +303,10 @@ function getBarChartOptions(colors) {
         }
       },
       tooltip: {
-        backgroundColor: isDark ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
-        titleColor: isDark ? '#f1f5f9' : '#1e293b',
-        bodyColor: isDark ? '#cbd5e1' : '#475569',
-        borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+        backgroundColor: themeColors.tooltipBg,
+        titleColor: themeColors.tooltipTitle,
+        bodyColor: themeColors.tooltipBody,
+        borderColor: themeColors.borderLight,
         borderWidth: 1,
         padding: 12,
         callbacks: {
@@ -338,6 +326,7 @@ function getBarChartOptions(colors) {
 
 /**
  * Custom plugin to show percentage on bars
+ * Uses centralized theme utilities (DRY principle)
  */
 const percentagePlugin = {
   id: 'percentagePlugin',
@@ -345,8 +334,8 @@ const percentagePlugin = {
     const ctx = chart.ctx;
     const sudahDataset = chart.data.datasets[0];
     const meta = chart.getDatasetMeta(0);
-    const isDark = document.documentElement.classList.contains('dark');
-    const textColor = isDark ? '#ffffff' : '#1e293b';
+    const themeColors = getThemeColors();
+    const textColor = themeColors.isDark ? '#ffffff' : '#1e293b';
 
     meta.data.forEach((bar, index) => {
       const sudah = sudahDataset.data[index];

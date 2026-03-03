@@ -1,22 +1,17 @@
-# TODO - Redesain Dashboard Monitoring Kelas
+# TODO - Theme Toggle Refactoring
 
-## Progress Checklist
+## Plan:
+- [x] 1. Buat theme utility di config.js - fungsi centralized untuk deteksi theme
+- [ ] 2. Refactor states.js - perbaiki toggleTheme() dan hapus kode duplikat
+- [ ] 3. Refactor charts.js - hapus getPieThemeColors() yang tidak digunakan
+- [ ] 4. Test dan verify theme toggle bekerja dengan benar untuk semua chart
 
-### 1. index.html - Update dengan Font Awesome dan struktur baru
-- [x] Tambahkan Font Awesome CDN
-- [x] Perbaiki navbar dengan ikon dan mobile menu
-- [x] Perbaiki stat cards dengan ikon
-- [x] Perbaiki chart headers dengan ikon
-- [x] Perbaiki table section dengan ikon
-
-### 2. css/styles.css - Animasi dan Responsiveness
-- [x] Tambah entrance animations (staggered)
-- [x] Tambah pulse animations untuk stats
-- [x] Perbaiki hover effects
-- [x] Tambahkan responsive breakpoints
-- [x] Perbaiki mobile navbar styles
-
-### 3. Testing dan Verifikasi
-- [x] Test responsive di berbagai ukuran layar
-- [x] Verify semua ikon muncul dengan benar
-- [x] Verify animasi berjalan smooth
+## Perubahan:
+1. **config.js**: Tambah Theme utilities (isDark, getThemeColors)
+2. **states.js**: 
+   - Hapus kode duplikat di toggleTheme()
+   - Gunakan updateAllCharts() yang centralized
+   - Hapus legacy variables
+3. **charts.js**: 
+   - Hapus getPieThemeColors() yang tidak digunakan
+   - Gunakan Theme utilities dari config

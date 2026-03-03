@@ -27,12 +27,6 @@ const STATE = {
   cachedKelasData: []
 };
 
-// Getter shortcuts
-const getChartInstances = () => STATE.charts;
-const getTable = () => STATE.table;
-const getFilters = () => STATE.filters;
-const getCachedData = () => STATE.cachedKelasData;
-
 // Setter shortcuts with validation
 const setFilters = (key, value) => {
   if (key in STATE.filters) {
@@ -51,7 +45,6 @@ const setCachedData = (data) => {
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initSegmentedControl();
-  // Removed initSkeletonRemoval - handled by renderStats/renderCharts
   initMobileMenu();
 });
 
@@ -59,10 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * Initialize dark mode from localStorage
  */
 function initTheme() {
-  const isDark = localStorage.theme === 'dark';
-  if (isDark) {
-    document.documentElement.classList.add('dark');
-  }
+  initThemeState(); // Use centralized theme utility
   
   const toggleBtn = document.getElementById('themeToggle');
   if (toggleBtn) {
@@ -72,11 +62,10 @@ function initTheme() {
 
 /**
  * Toggle dark/light theme and update all charts
+ * Uses centralized theme utilities for DRY principle
  */
 function toggleTheme() {
-  document.documentElement.classList.toggle('dark');
-  localStorage.theme = document.documentElement.classList.contains('dark') 
-    ? 'dark' : 'light';
+  toggleThemeState(); // Use centralized theme toggle
   
   // Update all charts with new theme
   updateAllCharts();
@@ -84,37 +73,35 @@ function toggleTheme() {
 
 /**
  * Update all charts when theme changes
+ * Centralized function - single source of truth for chart theme updates
  */
 function updateAllCharts() {
-  // Update pie charts
-  if (STATE.charts.pieInf) {
-    const isDark = document.documentElement.classList.contains('dark');
-    const colors = getPieChartColors();
-    const borderColor = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)';
-    const legendColor = isDark ? '#e2e8f0' : '#475569';
-    
-    STATE.charts.pieInf.data.datasets[0].backgroundColor = colors;
-    STATE.charts.pieInf.data.datasets[0].borderColor = borderColor;
-    STATE.charts.pieInf.options.plugins.legend.labels.color = legendColor;
-    STATE.charts.pieInf.update();
-  }
+  updatePieChartTheme(STATE.charts.pieInf);
+  updatePieChartTheme(STATE.charts.pieNonInf);
+  updateChartTheme();
+}
+
+function updatePieChartTheme(chart) {
+  if (!chart) return;
+
+  const pieColors = getPieChartColors();
+  const themeColors = getThemeColors();
+
+  // Update data colors
+  chart.data.datasets[0].backgroundColor = pieColors;
+  chart.data.datasets[0].borderColor = themeColors.border;
   
-  if (STATE.charts.pieNonInf) {
-    const isDark = document.documentElement.classList.contains('dark');
-    const colors = getPieChartColors();
-    const borderColor = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)';
-    const legendColor = isDark ? '#e2e8f0' : '#475569';
-    
-    STATE.charts.pieNonInf.data.datasets[0].backgroundColor = colors;
-    STATE.charts.pieNonInf.data.datasets[0].borderColor = borderColor;
-    STATE.charts.pieNonInf.options.plugins.legend.labels.color = legendColor;
-    STATE.charts.pieNonInf.update();
-  }
+  // Update legend and tooltip colors
+  chart.options.plugins.legend.labels.color = themeColors.legendColor;
+  chart.options.plugins.tooltip.backgroundColor = themeColors.tooltipBg;
+  chart.options.plugins.tooltip.titleColor = themeColors.tooltipTitle;
+  chart.options.plugins.tooltip.bodyColor = themeColors.tooltipBody;
   
-  // Update bar chart
-  if (STATE.charts.bar) {
-    updateChartTheme();
-  }
+  // For generateLabels, we need to get fresh colors on each legend render
+  // So we need to re-create the chart to fix the closure issue
+  
+  // Simple fix: just update the chart with animation
+  chart.update();
 }
 
 /**
@@ -237,12 +224,13 @@ function filterByTingkat(data, tingkat) {
 }
 
 /**
- * Update chart colors based on current theme
+ * Update bar chart colors based on current theme
+ * Uses centralized theme utilities for DRY principle
  */
 function updateChartTheme() {
   const colors = getChartColors();
+  const themeColors = getThemeColors();
   const chart = STATE.charts.bar;
-  const isDark = document.documentElement.classList.contains('dark');
   
   if (chart && chart.data.datasets) {
     chart.data.datasets[0].backgroundColor = colors.hijau;
@@ -253,9 +241,9 @@ function updateChartTheme() {
     chart.options.scales.y.ticks.color = colors.text;
     chart.options.scales.x.ticks.color = colors.text;
     chart.options.plugins.legend.labels.color = colors.text;
-    chart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)';
-    chart.options.plugins.tooltip.titleColor = isDark ? '#f1f5f9' : '#1e293b';
-    chart.options.plugins.tooltip.bodyColor = isDark ? '#cbd5e1' : '#475569';
+    chart.options.plugins.tooltip.backgroundColor = themeColors.tooltipBg;
+    chart.options.plugins.tooltip.titleColor = themeColors.tooltipTitle;
+    chart.options.plugins.tooltip.bodyColor = themeColors.tooltipBody;
     chart.update('none');
   }
 }
@@ -266,11 +254,6 @@ function updateChartTheme() {
 
 // Alias for format function
 const format = formatNumber;
-
-// Legacy variables (deprecated - use STATE instead)
-let currentTingkat = "all";
-let currentMode = 0;
-let cachedKelasData = [];
 
 // Expose chart instances to window for backward compatibility
 Object.defineProperty(window, 'pieInfChart', {

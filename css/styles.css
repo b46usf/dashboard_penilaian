@@ -1100,3 +1100,62 @@ canvas {
 .dark canvas {
   background: transparent !important;
 }
+
+/* ===== Pie Chart Legend - 4 Items Per Row ===== */
+.pie-chart-container ul {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 20px;
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.pie-chart-container ul li {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive - 2 columns on mobile */
+@media (max-width: 640px) {
+  .pie-chart-container ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .pie-chart-container ul li {
+    font-size: 10px !important;
+  }
+}
+
+/* ===== Pie Chart Legend Colors - Dark Mode ===== */
+.dark .pie-chart-container ul {
+  color: #e2e8f0 !important;
+}
+
+.dark .pie-chart-container ul li {
+  color: #e2e8f0 !important;
+}
+
+/* Chart.js legend text color */
+.dark #pieInf + .chartjs-legend ul li span,
+.dark #pieNonInf + .chartjs-legend ul li span {
+  color: #e2e8f0 !important;
+}
+
+/* Target legend via canvas sibling */
+.pie-chart-container canvas + div {
+  color: inherit;
+}
+
+.dark .pie-chart-container canvas + div {
+  color: #e2e8f0 !important;
+}
+
+.dark .pie-chart-container canvas + div ul li {
+  color: #e2e8f0 !important;
+}

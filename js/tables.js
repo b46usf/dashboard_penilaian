@@ -33,8 +33,51 @@ const CARD_LIST_STATE = {
   pageSize: 20,
   isLoading: false,
   hasMore: true,
-  totalRecords: 0
+  totalRecords: 0,
+  searchQuery: ''
 };
+
+/**
+ * Initialize mobile search functionality
+ */
+function initMobileSearch() {
+  const searchInput = document.getElementById('mobileSearchInput');
+  const clearButton = document.getElementById('clearMobileSearch');
+  
+  if (!searchInput) return;
+  
+  // Debounced search
+  let searchTimeout;
+  searchInput.addEventListener('input', function(e) {
+    const value = e.target.value.trim();
+    
+    // Show/hide clear button
+    if (clearButton) {
+      clearButton.classList.toggle('hidden', value.length === 0);
+    }
+    
+    // Debounce search
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      CARD_LIST_STATE.searchQuery = value;
+      resetCardList();
+      const tingkat = document.getElementById('filterTingkatTable')?.value || 'all';
+      loadCardList(tingkat);
+    }, CONFIG.UI.TABLE_SEARCH_DELAY);
+  });
+  
+  // Clear button handler
+  if (clearButton) {
+    clearButton.addEventListener('click', function() {
+      searchInput.value = '';
+      CARD_LIST_STATE.searchQuery = '';
+      clearButton.classList.add('hidden');
+      resetCardList();
+      const tingkat = document.getElementById('filterTingkatTable')?.value || 'all';
+      loadCardList(tingkat);
+    });
+  }
+}
 
 /**
  * Create status badge HTML (DRY)
@@ -312,7 +355,7 @@ async function loadCardList(tingkat = 'all') {
       draw: 1,
       start: CARD_LIST_STATE.page * CARD_LIST_STATE.pageSize,
       length: CARD_LIST_STATE.pageSize,
-      search: '',
+      search: CARD_LIST_STATE.searchQuery || '',
       tingkat: tingkat
     });
     
@@ -422,6 +465,9 @@ function initView() {
     // Show card list, hide table
     if (tableView) tableView.classList.add('hidden');
     if (cardListView) cardListView.classList.remove('hidden');
+    
+    // Initialize mobile search
+    initMobileSearch();
     
     // Reset and load card list
     resetCardList();
