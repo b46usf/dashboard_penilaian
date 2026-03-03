@@ -188,7 +188,7 @@ function renderTable() {
 }
 
 /**
- * Show card list skeleton (mobile)
+ * Show card list skeleton (mobile) - for initial load
  */
 function showCardListSkeleton() {
   const container = document.querySelector('.card-list-container');
@@ -196,38 +196,77 @@ function showCardListSkeleton() {
     container.innerHTML = `
       <div class="card-skeleton">
         <div class="card-skeleton-header">
-          <div class="skeleton skeleton-name"></div>
-          <div class="skeleton skeleton-nis"></div>
+          <div class="skeleton-stat skeleton-name"></div>
+
         </div>
         <div class="card-skeleton-status">
-          <div class="skeleton skeleton-badge"></div>
-          <div class="skeleton skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
         </div>
       </div>
       <div class="card-skeleton">
         <div class="card-skeleton-header">
-          <div class="skeleton skeleton-name"></div>
-          <div class="skeleton skeleton-nis"></div>
+          <div class="skeleton-stat skeleton-name"></div>
+          <div class="skeleton-stat skeleton-nis"></div>
         </div>
         <div class="card-skeleton-status">
-          <div class="skeleton skeleton-badge"></div>
-          <div class="skeleton skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
         </div>
       </div>
       <div class="card-skeleton">
         <div class="card-skeleton-header">
-          <div class="skeleton skeleton-name"></div>
-          <div class="skeleton skeleton-nis"></div>
+          <div class="skeleton-stat skeleton-name"></div>
+          <div class="skeleton-stat skeleton-nis"></div>
         </div>
         <div class="card-skeleton-status">
-          <div class="skeleton skeleton-badge"></div>
-          <div class="skeleton skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
         </div>
       </div>
     `;
   }
 }
 
+/**
+ * Show skeleton for load more (infinite scroll)
+ */
+function showLoadMoreSkeleton() {
+  const container = document.querySelector('.card-list-container');
+  if (container) {
+    const skeletonHTML = `
+      <div class="card-skeleton load-more-skeleton">
+        <div class="card-skeleton-header">
+          <div class="skeleton-stat skeleton-name"></div>
+          <div class="skeleton-stat skeleton-nis"></div>
+        </div>
+        <div class="card-skeleton-status">
+          <div class="skeleton-stat skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
+        </div>
+      </div>
+      <div class="card-skeleton load-more-skeleton">
+        <div class="card-skeleton-header">
+          <div class="skeleton-stat skeleton-name"></div>
+          <div class="skeleton-stat skeleton-nis"></div>
+        </div>
+        <div class="card-skeleton-status">
+          <div class="skeleton-stat skeleton-badge"></div>
+          <div class="skeleton-stat skeleton-badge"></div>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', skeletonHTML);
+  }
+}
+
+/**
+ * Remove load more skeleton
+ */
+function removeLoadMoreSkeleton() {
+  const skeletons = document.querySelectorAll('.load-more-skeleton');
+  skeletons.forEach(skeleton => skeleton.remove());
+}
 /**
  * Reset card list state
  */
@@ -261,6 +300,9 @@ async function loadCardList(tingkat = 'all') {
   // Show skeleton on first load
   if (CARD_LIST_STATE.page === 0) {
     showCardListSkeleton();
+  } else {
+    // Show skeleton for load more (infinite scroll)
+    showLoadMoreSkeleton();
   }
   
   if (loader) loader.style.display = 'flex';
@@ -283,9 +325,16 @@ async function loadCardList(tingkat = 'all') {
     // Check if there are more records
     CARD_LIST_STATE.hasMore = CARD_LIST_STATE.data.length < CARD_LIST_STATE.totalRecords;
     
-    // Render cards
+    // Render cards - APPEND new cards instead of replacing (for infinite scroll)
     if (container) {
-      container.innerHTML = renderCardListHTML(newData, CARD_LIST_STATE.page * CARD_LIST_STATE.pageSize);
+      if (CARD_LIST_STATE.page === 1) {
+        // First page - set initial HTML
+        container.innerHTML = renderCardListHTML(newData, 0);
+      } else {
+        // Remove skeleton first, then append new cards
+        removeLoadMoreSkeleton();
+        container.insertAdjacentHTML('beforeend', renderCardListHTML(newData, (CARD_LIST_STATE.page - 1) * CARD_LIST_STATE.pageSize));
+      }
     }
     
     // Update state
@@ -366,13 +415,24 @@ function initInfiniteScroll() {
  * Initialize view based on screen size
  */
 function initView() {
+  const tableView = document.querySelector('.table-view');
+  const cardListView = document.getElementById('cardListView');
+  
   if (isMobileView()) {
+    // Show card list, hide table
+    if (tableView) tableView.classList.add('hidden');
+    if (cardListView) cardListView.classList.remove('hidden');
+    
     // Reset and load card list
     resetCardList();
     const tingkat = document.getElementById('filterTingkatTable')?.value || 'all';
     loadCardList(tingkat);
     initInfiniteScroll();
   } else {
+    // Show table, hide card list
+    if (tableView) tableView.classList.remove('hidden');
+    if (cardListView) cardListView.classList.add('hidden');
+    
     // Render DataTable
     renderTable();
   }
@@ -382,7 +442,10 @@ function initView() {
  * Handle window resize
  */
 function handleResize() {
-  const wasMobile = !document.querySelector('.card-list-view').classList.contains('hidden') === false;
+  const tableView = document.querySelector('.table-view');
+  const cardListView = document.getElementById('cardListView');
+  
+  const wasMobile = tableView?.classList.contains('hidden') === true;
   const isMobile = isMobileView();
   
   if (wasMobile !== isMobile) {
