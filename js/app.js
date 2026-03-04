@@ -17,32 +17,32 @@
  */
 
 // Import all modules in dependency order
-import { CONFIG } from '../config.js';
-import { API, apiFetch } from '../apis.js';
-import { STATE, setFilters, setCachedData } from '../states.js';
+import { CONFIG } from './config.js';
+import { API, apiFetch } from './apis.js';
+import { STATE, setFilters, setCachedData } from './states.js';
 import { 
   showChartSkeletons, 
   hideChartSkeletons, 
   renderCharts, 
   renderBarChart 
-} from '../charts.js';
+} from './charts.js';
 import { 
   clearStatSkeletons, 
   renderStats, 
   resetStatSkeletons 
-} from '../stats.js';
+} from './stats.js';
 import { 
   initView, 
   renderTable, 
   STATUS_CONFIG,
   CARD_LIST_STATE 
-} from '../tables.js';
+} from './tables.js';
 import { 
   Toast, 
   handleApiError,
   loadDashboard,
   loadSummary 
-} from '../dashboards.js';
+} from './dashboards.js';
 
 // Import Page Builders
 import { DashboardPage } from './pages/dashboard/index.js';
