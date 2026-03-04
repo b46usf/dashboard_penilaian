@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
 /**
  * Load complete dashboard data
  */
-async function loadDashboard() {
+export async function loadDashboard() {
   try {
     // Show skeleton loaders for charts while fetching data
     showChartSkeletons();
@@ -194,7 +194,7 @@ async function loadDashboard() {
 /**
  * Load summary data only (for periodic refresh)
  */
-async function loadSummary() {
+export async function loadSummary() {
   try {
     const data = await apiFetch("dashboard_summary");
     renderStats(data.summary);
